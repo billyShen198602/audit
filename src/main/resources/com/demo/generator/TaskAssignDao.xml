@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.generator.TaskAssignDao">
+  <resultMap id="BaseResultMap" type="com.demo.generator.TaskAssign">
+    <id column="TASK_ASSIGN_ID" jdbcType="VARCHAR" property="taskAssignId" />
+    <result column="TASK_ID" jdbcType="VARCHAR" property="taskId" />
+    <result column="TASK_ASSIGN" jdbcType="VARCHAR" property="taskAssign" />
+    <result column="TASK_COMPLETE_TIME" jdbcType="DATE" property="taskCompleteTime" />
+    <result column="TASK_STATUS_CODE" jdbcType="VARCHAR" property="taskStatusCode" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    TASK_ASSIGN_ID, TASK_ID, TASK_ASSIGN, TASK_COMPLETE_TIME, TASK_STATUS_CODE, REMARK
+  </sql>
+  <select id="selectByExample" parameterType="com.demo.generator.TaskAssignExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AUDIT.TASK_ASSIGN
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByTaskAssign" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from TASK_ASSIGN
+    where task_assign = #{taskAssign,jdbcType=VARCHAR}
+    and task_status_code = 1
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AUDIT.TASK_ASSIGN
+    where TASK_ASSIGN_ID = #{taskAssignId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from AUDIT.TASK_ASSIGN
+    where TASK_ASSIGN_ID = #{taskAssignId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.demo.generator.TaskAssignExample">
+    delete from AUDIT.TASK_ASSIGN
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.demo.generator.TaskAssign">
+    insert into TASK_ASSIGN (TASK_ID, TASK_ASSIGN, TASK_COMPLETE_TIME,
+      TASK_STATUS_CODE, REMARK)
+    values (#{taskId,jdbcType=VARCHAR}, #{taskAssign,jdbcType=VARCHAR}, #{taskCompleteTime,jdbcType=DATE}, 
+      #{taskStatusCode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.demo.generator.TaskAssign">
+    <selectKey keyProperty="taskAssignId" order="AFTER" resultType="java.lang.String">
+      Oracle
+    </selectKey>
+    insert into AUDIT.TASK_ASSIGN
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        TASK_ID,
+      </if>
+      <if test="taskAssign != null">
+        TASK_ASSIGN,
+      </if>
+      <if test="taskCompleteTime != null">
+        TASK_COMPLETE_TIME,
+      </if>
+      <if test="taskStatusCode != null">
+        TASK_STATUS_CODE,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskAssign != null">
+        #{taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="taskCompleteTime != null">
+        #{taskCompleteTime,jdbcType=DATE},
+      </if>
+      <if test="taskStatusCode != null">
+        #{taskStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <insert id="batchInsertSelective" parameterType="java.util.List">
+    insert into TASK_ASSIGN
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        TASK_ID,
+      </if>
+      <if test="taskAssign != null">
+        TASK_ASSIGN,
+      </if>
+      <if test="taskCompleteTime != null">
+        TASK_COMPLETE_TIME,
+      </if>
+      <if test="taskStatusCode != null">
+        TASK_STATUS_CODE,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskAssign != null">
+        #{taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="taskCompleteTime != null">
+        #{taskCompleteTime,jdbcType=DATE},
+      </if>
+      <if test="taskStatusCode != null">
+        #{taskStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.demo.generator.TaskAssignExample" resultType="java.lang.Long">
+    select count(*) from AUDIT.TASK_ASSIGN
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AUDIT.TASK_ASSIGN
+    <set>
+      <if test="record.taskAssignId != null">
+        TASK_ASSIGN_ID = #{record.taskAssignId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskId != null">
+        TASK_ID = #{record.taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskAssign != null">
+        TASK_ASSIGN = #{record.taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskCompleteTime != null">
+        TASK_COMPLETE_TIME = #{record.taskCompleteTime,jdbcType=DATE},
+      </if>
+      <if test="record.taskStatusCode != null">
+        TASK_STATUS_CODE = #{record.taskStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        REMARK = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AUDIT.TASK_ASSIGN
+    set TASK_ASSIGN_ID = #{record.taskAssignId,jdbcType=VARCHAR},
+      TASK_ID = #{record.taskId,jdbcType=VARCHAR},
+      TASK_ASSIGN = #{record.taskAssign,jdbcType=VARCHAR},
+      TASK_COMPLETE_TIME = #{record.taskCompleteTime,jdbcType=DATE},
+      TASK_STATUS_CODE = #{record.taskStatusCode,jdbcType=VARCHAR},
+      REMARK = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByTaskIdAndAssignId" parameterType="com.demo.generator.TaskAssign">
+    update TASK_ASSIGN
+    set TASK_COMPLETE_TIME = #{record.taskCompleteTime,jdbcType=DATE},
+      TASK_STATUS_CODE = #{record.taskStatusCode,jdbcType=VARCHAR},
+      REMARK = #{record.remark,jdbcType=VARCHAR}
+    where  TASK_ID = #{record.taskId,jdbcType=VARCHAR}
+    and   TASK_ASSIGN = #{record.taskAssign,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByTaskIdAndAssignIdSelective_" >
+    update TASK_ASSIGN
+    set TASK_COMPLETE_TIME = #{taskCompleteTime},
+      TASK_STATUS_CODE = #{taskStatusCode},
+      REMARK = #{remark}
+    where  TASK_ID = #{taskId}
+    and   TASK_ASSIGN = #{taskAssign}
+  </update>
+  <update id="updateByTaskIdAndAssignIdSelective" parameterType="com.demo.generator.TaskAssign">
+    update TASK_ASSIGN
+    <set>
+      <if test="taskCompleteTime != null">
+        TASK_COMPLETE_TIME = #{taskCompleteTime,jdbcType=DATE},
+      </if>
+      <if test="taskStatusCode != null">
+        TASK_STATUS_CODE = #{taskStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where  TASK_ID = #{taskId,jdbcType=VARCHAR}
+    and   TASK_ASSIGN = #{taskAssign,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.demo.generator.TaskAssign">
+    update AUDIT.TASK_ASSIGN
+    <set>
+      <if test="taskId != null">
+        TASK_ID = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskAssign != null">
+        TASK_ASSIGN = #{taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="taskCompleteTime != null">
+        TASK_COMPLETE_TIME = #{taskCompleteTime,jdbcType=DATE},
+      </if>
+      <if test="taskStatusCode != null">
+        TASK_STATUS_CODE = #{taskStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where TASK_ASSIGN_ID = #{taskAssignId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.demo.generator.TaskAssign">
+    update AUDIT.TASK_ASSIGN
+    set TASK_ID = #{taskId,jdbcType=VARCHAR},
+      TASK_ASSIGN = #{taskAssign,jdbcType=VARCHAR},
+      TASK_COMPLETE_TIME = #{taskCompleteTime,jdbcType=DATE},
+      TASK_STATUS_CODE = #{taskStatusCode,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where TASK_ASSIGN_ID = #{taskAssignId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.generator.TaskRulesDao">
+  <resultMap id="BaseResultMap" type="com.demo.generator.TaskRules">
+    <id column="TASK_RULES_ID" jdbcType="VARCHAR" property="taskRulesId" />
+    <result column="FIRST_USER_ID" jdbcType="VARCHAR" property="firstUserId" />
+    <result column="SECOND_USER_ID" jdbcType="VARCHAR" property="secondUserId" />
+    <result column="THIRD_USER_ID" jdbcType="VARCHAR" property="thirdUserId" />
+    <result column="FOURTH_USER_ID" jdbcType="VARCHAR" property="fourthUserId" />
+    <result column="FIFTH_USER_ID" jdbcType="VARCHAR" property="fifthUserId" />
+    <result column="SIXTH_USER_ID" jdbcType="VARCHAR" property="sixthUserId" />
+    <result column="SEVENTH_USER_ID" jdbcType="VARCHAR" property="seventhUserId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    TASK_RULES_ID, FIRST_USER_ID, SECOND_USER_ID, THIRD_USER_ID, FOURTH_USER_ID, FIFTH_USER_ID, 
+    SIXTH_USER_ID, SEVENTH_USER_ID
+  </sql>
+  <select id="selectByExample" parameterType="com.demo.generator.TaskRulesExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AUDIT.TASK_RULES
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from TASK_RULES
+    where TASK_RULES_ID = #{taskRulesId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from AUDIT.TASK_RULES
+    where TASK_RULES_ID = #{taskRulesId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.demo.generator.TaskRulesExample">
+    delete from AUDIT.TASK_RULES
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.demo.generator.TaskRules">
+    <selectKey keyProperty="taskRulesId" order="AFTER" resultType="java.lang.String">
+      Oracle
+    </selectKey>
+    insert into AUDIT.TASK_RULES (FIRST_USER_ID, SECOND_USER_ID, THIRD_USER_ID, 
+      FOURTH_USER_ID, FIFTH_USER_ID, SIXTH_USER_ID, 
+      SEVENTH_USER_ID)
+    values (#{firstUserId,jdbcType=VARCHAR}, #{secondUserId,jdbcType=VARCHAR}, #{thirdUserId,jdbcType=VARCHAR}, 
+      #{fourthUserId,jdbcType=VARCHAR}, #{fifthUserId,jdbcType=VARCHAR}, #{sixthUserId,jdbcType=VARCHAR}, 
+      #{seventhUserId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.demo.generator.TaskRules">
+    insert into TASK_RULES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskRulesId != null">
+        TASK_RULES_ID,
+      </if>
+      <if test="firstUserId != null">
+        FIRST_USER_ID,
+      </if>
+      <if test="secondUserId != null">
+        SECOND_USER_ID,
+      </if>
+      <if test="thirdUserId != null">
+        THIRD_USER_ID,
+      </if>
+      <if test="fourthUserId != null">
+        FOURTH_USER_ID,
+      </if>
+      <if test="fifthUserId != null">
+        FIFTH_USER_ID,
+      </if>
+      <if test="sixthUserId != null">
+        SIXTH_USER_ID,
+      </if>
+      <if test="seventhUserId != null">
+        SEVENTH_USER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskRulesId != null">
+        #{taskRulesId,jdbcType=VARCHAR},
+      </if>
+      <if test="firstUserId != null">
+        #{firstUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="secondUserId != null">
+        #{secondUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdUserId != null">
+        #{thirdUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="fourthUserId != null">
+        #{fourthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="fifthUserId != null">
+        #{fifthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="sixthUserId != null">
+        #{sixthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="seventhUserId != null">
+        #{seventhUserId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.demo.generator.TaskRulesExample" resultType="java.lang.Long">
+    select count(*) from AUDIT.TASK_RULES
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AUDIT.TASK_RULES
+    <set>
+      <if test="record.taskRulesId != null">
+        TASK_RULES_ID = #{record.taskRulesId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstUserId != null">
+        FIRST_USER_ID = #{record.firstUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondUserId != null">
+        SECOND_USER_ID = #{record.secondUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.thirdUserId != null">
+        THIRD_USER_ID = #{record.thirdUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fourthUserId != null">
+        FOURTH_USER_ID = #{record.fourthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fifthUserId != null">
+        FIFTH_USER_ID = #{record.fifthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sixthUserId != null">
+        SIXTH_USER_ID = #{record.sixthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seventhUserId != null">
+        SEVENTH_USER_ID = #{record.seventhUserId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AUDIT.TASK_RULES
+    set TASK_RULES_ID = #{record.taskRulesId,jdbcType=VARCHAR},
+      FIRST_USER_ID = #{record.firstUserId,jdbcType=VARCHAR},
+      SECOND_USER_ID = #{record.secondUserId,jdbcType=VARCHAR},
+      THIRD_USER_ID = #{record.thirdUserId,jdbcType=VARCHAR},
+      FOURTH_USER_ID = #{record.fourthUserId,jdbcType=VARCHAR},
+      FIFTH_USER_ID = #{record.fifthUserId,jdbcType=VARCHAR},
+      SIXTH_USER_ID = #{record.sixthUserId,jdbcType=VARCHAR},
+      SEVENTH_USER_ID = #{record.seventhUserId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.demo.generator.TaskRules">
+    update AUDIT.TASK_RULES
+    <set>
+      <if test="firstUserId != null">
+        FIRST_USER_ID = #{firstUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="secondUserId != null">
+        SECOND_USER_ID = #{secondUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdUserId != null">
+        THIRD_USER_ID = #{thirdUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="fourthUserId != null">
+        FOURTH_USER_ID = #{fourthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="fifthUserId != null">
+        FIFTH_USER_ID = #{fifthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="sixthUserId != null">
+        SIXTH_USER_ID = #{sixthUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="seventhUserId != null">
+        SEVENTH_USER_ID = #{seventhUserId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where TASK_RULES_ID = #{taskRulesId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.demo.generator.TaskRules">
+    update AUDIT.TASK_RULES
+    set FIRST_USER_ID = #{firstUserId,jdbcType=VARCHAR},
+      SECOND_USER_ID = #{secondUserId,jdbcType=VARCHAR},
+      THIRD_USER_ID = #{thirdUserId,jdbcType=VARCHAR},
+      FOURTH_USER_ID = #{fourthUserId,jdbcType=VARCHAR},
+      FIFTH_USER_ID = #{fifthUserId,jdbcType=VARCHAR},
+      SIXTH_USER_ID = #{sixthUserId,jdbcType=VARCHAR},
+      SEVENTH_USER_ID = #{seventhUserId,jdbcType=VARCHAR}
+    where TASK_RULES_ID = #{taskRulesId,jdbcType=VARCHAR}
+  </update>
+</mapper>

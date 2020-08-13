@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.generator.TaskRecDao">
+  <resultMap id="BaseResultMap" type="com.demo.generator.TaskRec">
+    <result column="TASK_REC_ID" jdbcType="VARCHAR" property="taskRecId" />
+    <result column="TASK_ID" jdbcType="VARCHAR" property="taskId" />
+    <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName" />
+    <result column="PROMOTER_USER" jdbcType="VARCHAR" property="promoterUser" />
+    <result column="TASK_ASSIGN" jdbcType="VARCHAR" property="taskAssign" />
+    <result column="CREATE_TIME" jdbcType="DATE" property="createTime" />
+    <result column="UNTIL_TIME" jdbcType="DATE" property="untilTime" />
+    <result column="TASK_STATUS_CHANGE_BEFORE" jdbcType="VARCHAR" property="taskStatusChangeBefore" />
+    <result column="TASK_STATUS_CHANGE_AFTER" jdbcType="VARCHAR" property="taskStatusChangeAfter" />
+    <result column="TASK_STATUS_CHANGE_TIME" jdbcType="DATE" property="taskStatusChangeTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    TASK_REC_ID, TASK_ID, TASK_NAME, PROMOTER_USER, TASK_ASSIGN, CREATE_TIME, UNTIL_TIME, 
+    TASK_STATUS_CHANGE_BEFORE, TASK_STATUS_CHANGE_AFTER, TASK_STATUS_CHANGE_TIME
+  </sql>
+  <select id="selectByExample" parameterType="com.demo.generator.TaskRecExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AUDIT.TASK_REC
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByTaskId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from TASK_REC
+    where task_id = #{taskId,jdbcType=VARCHAR}
+    order by task_rec_id desc
+  </select>
+
+  <delete id="deleteByExample" parameterType="com.demo.generator.TaskRecExample">
+    delete from AUDIT.TASK_REC
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.demo.generator.TaskRec">
+    <selectKey keyProperty="taskRecId" order="AFTER" resultType="java.lang.String">
+      Oracle
+    </selectKey>
+    insert into TASK_REC (TASK_ID, TASK_NAME, PROMOTER_USER,
+      TASK_ASSIGN, CREATE_TIME, UNTIL_TIME, 
+      TASK_STATUS_CHANGE_BEFORE, TASK_STATUS_CHANGE_AFTER, 
+      TASK_STATUS_CHANGE_TIME)
+    values (#{taskId,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, #{promoterUser,jdbcType=VARCHAR}, 
+      #{taskAssign,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{untilTime,jdbcType=DATE}, 
+      #{taskStatusChangeBefore,jdbcType=VARCHAR}, #{taskStatusChangeAfter,jdbcType=VARCHAR}, 
+      #{taskStatusChangeTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.demo.generator.TaskRec">
+    insert into TASK_REC
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        TASK_ID,
+      </if>
+      <if test="taskName != null">
+        TASK_NAME,
+      </if>
+      <if test="promoterUser != null">
+        PROMOTER_USER,
+      </if>
+      <if test="taskAssign != null">
+        TASK_ASSIGN,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="untilTime != null">
+        UNTIL_TIME,
+      </if>
+      <if test="taskStatusChangeBefore != null">
+        TASK_STATUS_CHANGE_BEFORE,
+      </if>
+      <if test="taskStatusChangeAfter != null">
+        TASK_STATUS_CHANGE_AFTER,
+      </if>
+      <if test="taskStatusChangeTime != null">
+        TASK_STATUS_CHANGE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="promoterUser != null">
+        #{promoterUser,jdbcType=VARCHAR},
+      </if>
+      <if test="taskAssign != null">
+        #{taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="untilTime != null">
+        #{untilTime,jdbcType=DATE},
+      </if>
+      <if test="taskStatusChangeBefore != null">
+        #{taskStatusChangeBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatusChangeAfter != null">
+        #{taskStatusChangeAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatusChangeTime != null">
+        #{taskStatusChangeTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.demo.generator.TaskRecExample" resultType="java.lang.Long">
+    select count(*) from AUDIT.TASK_REC
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AUDIT.TASK_REC
+    <set>
+      <if test="record.taskRecId != null">
+        TASK_REC_ID = #{record.taskRecId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskId != null">
+        TASK_ID = #{record.taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskName != null">
+        TASK_NAME = #{record.taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.promoterUser != null">
+        PROMOTER_USER = #{record.promoterUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskAssign != null">
+        TASK_ASSIGN = #{record.taskAssign,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        CREATE_TIME = #{record.createTime,jdbcType=DATE},
+      </if>
+      <if test="record.untilTime != null">
+        UNTIL_TIME = #{record.untilTime,jdbcType=DATE},
+      </if>
+      <if test="record.taskStatusChangeBefore != null">
+        TASK_STATUS_CHANGE_BEFORE = #{record.taskStatusChangeBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskStatusChangeAfter != null">
+        TASK_STATUS_CHANGE_AFTER = #{record.taskStatusChangeAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskStatusChangeTime != null">
+        TASK_STATUS_CHANGE_TIME = #{record.taskStatusChangeTime,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AUDIT.TASK_REC
+    set TASK_REC_ID = #{record.taskRecId,jdbcType=VARCHAR},
+      TASK_ID = #{record.taskId,jdbcType=VARCHAR},
+      TASK_NAME = #{record.taskName,jdbcType=VARCHAR},
+      PROMOTER_USER = #{record.promoterUser,jdbcType=VARCHAR},
+      TASK_ASSIGN = #{record.taskAssign,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=DATE},
+      UNTIL_TIME = #{record.untilTime,jdbcType=DATE},
+      TASK_STATUS_CHANGE_BEFORE = #{record.taskStatusChangeBefore,jdbcType=VARCHAR},
+      TASK_STATUS_CHANGE_AFTER = #{record.taskStatusChangeAfter,jdbcType=VARCHAR},
+      TASK_STATUS_CHANGE_TIME = #{record.taskStatusChangeTime,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
