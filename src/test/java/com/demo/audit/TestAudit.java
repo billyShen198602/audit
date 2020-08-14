@@ -45,8 +45,13 @@ public class TestAudit {
     public void testInsertTaskRules() throws Exception {
         TaskRules taskRules = new TaskRules();
 //        taskRules.setTaskRulesId("3");
-        taskRules.setFirstUserId("userId002");
-//        taskRules.setSecondUserId("userId002");
+        taskRules.setFirstUserId("userId001");
+        taskRules.setSecondUserId("userId002");
+        taskRules.setThirdUserId("userId003");
+        taskRules.setFourthUserId("userId004");
+        taskRules.setFifthUserId("userId005");
+        taskRules.setSixthUserId("userId006");
+        taskRules.setSeventhUserId("userId007");
         int insert = taskRulesDao.insertSelective(taskRules);
         log.info(String.valueOf(insert));
     }

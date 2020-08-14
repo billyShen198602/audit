@@ -310,6 +310,12 @@
         TASK_STATUS_CODE = 5,
         REMARK = #{remark,jdbcType=VARCHAR}
     where TASK_ID = #{taskId,jdbcType=VARCHAR}
-    and TASK_STATUS_CODE = 1
+    and TASK_STATUS_CODE = 6
+  </update>
+  <update id="updateByUserId" parameterType="java.lang.String">
+    update TASK_ASSIGN
+    set TASK_STATUS_CODE = 1
+    where TASK_ID = #{taskId,jdbcType=VARCHAR}
+    and TASK_ASSIGN = #{nextAuditId,jdbcType=VARCHAR}
   </update>
 </mapper>
