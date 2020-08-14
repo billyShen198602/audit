@@ -30,7 +30,7 @@ public class TestService {
 
     @Test
     public void testAuditTask() throws Exception {
-        String result = auditService.auditTask("userId001", "1", true);
+        String result = auditService.auditTask("userId001", "1");
         log.info(result);
     }
 
