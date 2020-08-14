@@ -36,7 +36,13 @@ public class AuditController {
         return ResultUtils.success(promoterTask);
     }
 
+
     @ApiOperation(value = "审批接口",notes = "用户审批功能")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "currentUserId",dataType = "String",required = true,value = "当前用户"),
+            @ApiImplicitParam(paramType = "query",name = "taskId",dataType = "String",required = true,value = "待审批任务Id"),
+            @ApiImplicitParam(paramType = "query",name = "hasNextAudit",dataType = "int",required = true,value = "当前用户是否有下一个审批人(0否1是)")
+    })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/audit")
     public Result auditTask(@RequestParam("currentUserId") String currentUserId,@RequestParam("taskId") String taskId,
@@ -47,6 +53,9 @@ public class AuditController {
     }
 
     @ApiOperation(value = "获取待办任务列表接口",notes = "用户获取待办任务列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "currentUserId",dataType = "String",required = true,value = "当前用户")
+    })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/preTaskList")
     public Result getPreAuditTasks(@RequestParam("currentUserId") String currentUserId){
@@ -55,6 +64,10 @@ public class AuditController {
     }
 
     @ApiOperation(value = "驳回任务接口",notes = "用户驳回任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "currentUserId",dataType = "String",required = true,value = "当前用户"),
+            @ApiImplicitParam(paramType = "query",name = "taskId",dataType = "String",required = true,value = "待审批任务Id")
+    })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/rejectTask")
     public Result rejectTask(@RequestParam("currentUserId") String currentUserId,@RequestParam("taskId") String taskId){
@@ -63,6 +76,9 @@ public class AuditController {
     }
 
     @ApiOperation(value = "获取任务生命周期接口",notes = "用户获取任务生命周期")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "taskId",dataType = "String",required = true,value = "任务Id")
+    })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/taskLifeCycle")
     public Result getTaskLifeCycle(@RequestParam("taskId") String taskId){
