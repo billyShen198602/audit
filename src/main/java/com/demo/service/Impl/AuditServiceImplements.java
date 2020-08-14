@@ -47,7 +47,6 @@ public class AuditServiceImplements implements AuditService {
         //2、插入任务表，更新任务状态为待审批
         EcifTask ecifTask = new EcifTask();
         ecifTask.setTaskName(taskName);
-        //0为待审批
         ecifTask.setTaskStatusCode(AuditStatusEnum.PRE_AUDIT.getCode());
         ecifTask.setCreateTime(new Date());
         ecifTask.setPromoterUser(promoterUserId);
@@ -69,7 +68,6 @@ public class AuditServiceImplements implements AuditService {
         taskAssignDao.insert(taskAssign);
         rulesUserIdList.remove(0);
         for (String ruleUserId : rulesUserIdList) {
-//            TaskAssign taskAssign_ = new TaskAssign();
             taskAssign.setTaskId(ecifTaskLatest.getTaskId());
             taskAssign.setTaskAssign(ruleUserId);
             taskAssign.setTaskStatusCode(AuditStatusEnum.NOT_ASSIGN.getCode());
@@ -107,13 +105,11 @@ public class AuditServiceImplements implements AuditService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String auditTask(String currentUserId, String taskId) {
+        AtomicInteger atomicInteger = new AtomicInteger(1);
         SqlSession session = sqlSessionFactory.openSession();
         TaskAssignDao taskAssignDao = session.getMapper(TaskAssignDao.class);
-        //0、查询任务分配表,是否有下一个审批人
-        int auditCount = taskAssignDao.judgeHasNextAudit(taskId);
-        boolean hasNextAudit = (auditCount == 1 ? true : false);
-        //2、插入任务记录表
         EcifTaskDao ecifTaskDao = session.getMapper(EcifTaskDao.class);
+        //1、插入任务记录表
         EcifTask ecifTask_ = ecifTaskDao.selectByPrimaryKey(taskId);
         TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
         TaskRec taskRec = new TaskRec();
@@ -123,45 +119,51 @@ public class AuditServiceImplements implements AuditService {
         taskRec.setTaskAssign(currentUserId);
         taskRec.setCreateTime(ecifTask_.getCreateTime());
         taskRec.setUntilTime(ecifTask_.getUntilTime());
+        //2、插入任务表
         EcifTask ecifTask = new EcifTask();
         ecifTask.setTaskId(taskId);
         ecifTask.setUpdateTime(new Date());
+        //3、根据任务id查询任务规则表，获取任务审批人数组链路
         EcifTask ecifTask1 = ecifTaskDao.selectByPrimaryKey(taskId);
         TaskRulesDao taskRulesDao = session.getMapper(TaskRulesDao.class);
         TaskRules taskRules = taskRulesDao.selectByPrimaryKey(ecifTask1.getTaskRulesId());
         List<String> rulesUserIdList = ObjUtils.ConvertObjToList(taskRules);
         rulesUserIdList.remove(0);
+        rulesUserIdList.stream().forEach(ruleUserId -> log.info(ecifTask1.getTaskName() + "的第"
+         + atomicInteger.getAndIncrement() + "个审批人为" + ruleUserId + "******"));
         int index = 0;
         for (int i = 0; i < rulesUserIdList.size(); i++) {
             if (currentUserId.equals(rulesUserIdList.get(i))) {
                 index = i;
             }
         }
-        //1、更新任务分配表的任务状态为已审批
+        //4、更新任务分配表的任务状态为已审批
         TaskAssign taskAssign = new TaskAssign();
         taskAssign.setTaskAssign(currentUserId);
         taskAssign.setTaskId(taskId);
         taskAssign.setTaskStatusCode(AuditStatusEnum.ALREADY_AUDIT.getCode());
         taskAssign.setTaskCompleteTime(new Date());
         if ((index + 1) == rulesUserIdList.size()) {
-            //已经是最后一个节点
+            //5、已经是最后一个节点
             taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批，审批结束*********" );
             taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
             taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             taskRec.setTaskStatusChangeTime(new Date());
-            //5、如果审批结束，更新任务表的状态为已完成，向发起人发送消息，任务审批已完成
+            //6、更新任务表的状态为已完成
             ecifTask.setTaskStatusCode(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             //TODO 向发起人发送消息，任务审批已完成
 
         } else {
-            //3、如果存在下一审批人，更新任务表的任务状态为审批中，向下一审批人发送审批消息
+            //7、存在下一审批人
             taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
             taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             taskRec.setTaskStatusChangeTime(new Date());
+            //8、更新任务表的任务状态为审批中
             ecifTask.setTaskStatusCode(AuditStatusEnum.ING_AUDIT.getCode());
             String nextAuditId = rulesUserIdList.get(index + 1);
+            log.info("当前用户是" + currentUserId + ",下一个审批人为" + nextAuditId + "********");
             taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批,下一个审批人为:" + nextAuditId + "******");
-            //4、更新任务分配表下一审批节点的状态从"未分配"为"待审批"
+            //9、更新任务分配表下一审批节点的状态从"未分配"为"待审批"
             TaskAssign taskAssign1 = new TaskAssign();
             taskAssign1.setTaskId(taskId);
             taskAssign1.setTaskAssign(nextAuditId);
@@ -170,16 +172,6 @@ public class AuditServiceImplements implements AuditService {
             //TODO 向下一审批人发送审批消息
 
         }
-
-//        } else {
-//            taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
-//            taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
-//            taskRec.setTaskStatusChangeTime(new Date());
-//            //5、如果审批结束，更新任务表的状态为已完成，向发起人发送消息，任务审批已完成
-//            ecifTask.setTaskStatusCode(AuditStatusEnum.ALREADY_COMPLETE.getCode());
-//            //TODO 向发起人发送消息，任务审批已完成
-//
-//        }
         taskAssignDao.updateByTaskIdAndAssignId(taskAssign);
         taskRecDao.insertSelective(taskRec);
         ecifTaskDao.updateByPrimaryKeySelective(ecifTask);
