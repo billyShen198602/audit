@@ -11,7 +11,8 @@ public enum AuditStatusEnum {
     ING_AUDIT("2","审批中"),
     ALREADY_AUDIT("3","已审批"),
     ALREADY_REJECT("4","已驳回"),
-    ALREADY_COMPLETE("5","已完成");
+    ALREADY_COMPLETE("5","已完成"),
+    NOT_ASSIGN("6","未分配");
 
     private final String code;
 

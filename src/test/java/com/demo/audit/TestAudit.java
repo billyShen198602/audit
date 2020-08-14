@@ -62,7 +62,7 @@ public class TestAudit {
     @Test
     public void testInsertTaskStatus() throws Exception {
         TaskStatus taskStatus = new TaskStatus();
-        taskStatus.setTaskStatusName("已完成");//待审批、审批中、已审批、已驳回、已完成
+        taskStatus.setTaskStatusName("未分配");//待审批、审批中、已审批、已驳回、已完成、未分配
         taskStatusDao.insert(taskStatus);
     }
 

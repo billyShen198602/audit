@@ -61,11 +61,18 @@ public class AuditServiceImplements implements AuditService {
         EcifTask ecifTaskLatest = ecifTaskDao.selectLatest();
         SqlSession batchSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
         TaskAssignDao taskAssignDao = batchSession.getMapper(TaskAssignDao.class);
+        String firstRuleUserId = rulesUserIdList.get(0);
+        TaskAssign taskAssign = new TaskAssign();
+        taskAssign.setTaskId(ecifTaskLatest.getTaskId());
+        taskAssign.setTaskAssign(firstRuleUserId);
+        taskAssign.setTaskStatusCode(AuditStatusEnum.PRE_AUDIT.getCode());
+        taskAssignDao.insert(taskAssign);
+        rulesUserIdList.remove(0);
         for (String ruleUserId : rulesUserIdList) {
-            TaskAssign taskAssign = new TaskAssign();
+//            TaskAssign taskAssign_ = new TaskAssign();
             taskAssign.setTaskId(ecifTaskLatest.getTaskId());
             taskAssign.setTaskAssign(ruleUserId);
-            taskAssign.setTaskStatusCode(AuditStatusEnum.PRE_AUDIT.getCode());
+            taskAssign.setTaskStatusCode(AuditStatusEnum.NOT_ASSIGN.getCode());
             taskAssignDao.insert(taskAssign);
         }
         batchSession.commit();
