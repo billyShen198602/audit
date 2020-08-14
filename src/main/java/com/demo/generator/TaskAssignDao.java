@@ -46,5 +46,5 @@ public interface TaskAssignDao {
 
     int updateByTaskIdAndTaskStatus(TaskAssign record);
 
-    int updateByUserId(@Param("taskId") String taskId,@Param("nextAuditId") String nextAuditId);
+    int updateByUserId(TaskAssign record);
 }

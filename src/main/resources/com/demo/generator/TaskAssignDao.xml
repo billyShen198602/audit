@@ -312,10 +312,10 @@
     where TASK_ID = #{taskId,jdbcType=VARCHAR}
     and TASK_STATUS_CODE = 6
   </update>
-  <update id="updateByUserId" parameterType="java.lang.String">
+  <update id="updateByUserId" parameterType="com.demo.generator.TaskAssign">
     update TASK_ASSIGN
     set TASK_STATUS_CODE = 1
     where TASK_ID = #{taskId,jdbcType=VARCHAR}
-    and TASK_ASSIGN = #{nextAuditId,jdbcType=VARCHAR}
+    and TASK_ASSIGN = #{taskAssign,jdbcType=VARCHAR}
   </update>
 </mapper>
