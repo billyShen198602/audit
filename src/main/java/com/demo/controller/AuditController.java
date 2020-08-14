@@ -5,6 +5,8 @@ import com.demo.generator.EcifTask;
 import com.demo.generator.TaskRec;
 import com.demo.service.AuditService;
 import com.demo.utils.ResultUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,11 @@ public class AuditController {
     private AuditService auditService;
 
     @ApiOperation(value = "发起审批接口",notes = "用户发起审批功能")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "promoterUserId",dataType = "String",required = true,value = "发起者UserId"),
+            @ApiImplicitParam(paramType = "query",name = "ruleId",dataType = "String",required = true,value = "审核规则表Id"),
+            @ApiImplicitParam(paramType = "query",name = "taskName",dataType = "String",required = true,value = "任务名称")
+    })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/promoter")
     public Result promoterTask(@RequestParam("promoterUserId") String promoterUserId,
