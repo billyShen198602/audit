@@ -110,7 +110,8 @@ public class AuditServiceImplements implements AuditService {
         taskAssign.setTaskAssign(currentUserId);
         taskAssign.setTaskId(taskId);
         taskAssign.setTaskStatusCode(AuditStatusEnum.ALREADY_AUDIT.getCode());
-        taskAssign.setRemark("用户：" + currentUserId + "的任务" + taskId + "已经审批");
+//        taskAssign.setRemark("用户：" + currentUserId + "的任务" + taskId + "已经审批");
+        taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批*************************");
         taskAssign.setTaskCompleteTime(new Date());
         taskAssignDao.updateByTaskIdAndAssignId(taskAssign);
         //2、插入任务记录表
@@ -201,6 +202,12 @@ public class AuditServiceImplements implements AuditService {
         ecifTask.setTaskStatusCode(AuditStatusEnum.ALREADY_REJECT.getCode());
         ecifTask.setUpdateTime(new Date());
         ecifTaskDao.updateByPrimaryKeySelective(ecifTask);
+        //更新后续节点的任务状态为已驳回
+        TaskAssign taskAssign_ = new TaskAssign();
+        taskAssign_.setTaskCompleteTime(new Date());
+        taskAssign_.setTaskId(taskId);
+        taskAssign_.setRemark("任务" + taskId + "已经被用户" + currentUserId + "驳回！！！！！！！！！！！！！");
+        taskAssignDao.updateByTaskIdAndTaskStatus(taskAssign_);
         //3、插入任务记录表
         TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
         EcifTask ecifTask_ = ecifTaskDao.selectByPrimaryKey(taskId);

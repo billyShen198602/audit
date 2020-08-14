@@ -40,8 +40,7 @@ public class AuditController {
     @ApiOperation(value = "审批接口",notes = "用户审批功能")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query",name = "currentUserId",dataType = "String",required = true,value = "当前用户"),
-            @ApiImplicitParam(paramType = "query",name = "taskId",dataType = "String",required = true,value = "待审批任务Id"),
-            @ApiImplicitParam(paramType = "query",name = "hasNextAudit",dataType = "int",required = true,value = "当前用户是否有下一个审批人(0否1是)")
+            @ApiImplicitParam(paramType = "query",name = "taskId",dataType = "String",required = true,value = "待审批任务Id")
     })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/audit")
