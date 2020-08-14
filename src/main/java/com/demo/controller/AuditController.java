@@ -85,4 +85,6 @@ public class AuditController {
         List<TaskRec> taskRecList = auditService.getTaskLifeCycle(taskId);
         return ResultUtils.success(taskRecList);
     }
+
+    //TODO 当前用户查看待审批任务的审批规则
 }

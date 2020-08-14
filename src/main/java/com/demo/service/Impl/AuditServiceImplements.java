@@ -120,24 +120,27 @@ public class AuditServiceImplements implements AuditService {
         taskRec.setTaskAssign(currentUserId);
         taskRec.setCreateTime(ecifTask_.getCreateTime());
         taskRec.setUntilTime(ecifTask_.getUntilTime());
-        taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
-        taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ING_AUDIT.getCode());
-        taskRec.setTaskStatusChangeTime(new Date());
-        taskRecDao.insertSelective(taskRec);
         EcifTask ecifTask = new EcifTask();
         ecifTask.setTaskId(taskId);
         ecifTask.setUpdateTime(new Date());
         if (hasNextAudit){
+            taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
+            taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ING_AUDIT.getCode());
+            taskRec.setTaskStatusChangeTime(new Date());
             //3、如果存在下一审批人，更新任务表的任务状态为审批中，向下一审批人发送审批消息
             ecifTask.setTaskStatusCode(AuditStatusEnum.ING_AUDIT.getCode());
             //TODO 向下一审批人发送审批消息
 
         }else {
+            taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
+            taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
+            taskRec.setTaskStatusChangeTime(new Date());
             //4、如果审批结束，更新任务表的状态为已完成，向发起人发送消息，任务审批已完成
             ecifTask.setTaskStatusCode(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             //TODO 向发起人发送消息，任务审批已完成
 
         }
+        taskRecDao.insertSelective(taskRec);
         ecifTaskDao.updateByPrimaryKeySelective(ecifTask);
         session.commit();
         session.clearCache();
