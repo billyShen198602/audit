@@ -1,4 +1,6 @@
-package com.demo.constant;
+package com.demo.utils;
+
+import com.demo.constant.Result;
 
 public class ResultUtils {
     public static Result error(String code, String msg) {
