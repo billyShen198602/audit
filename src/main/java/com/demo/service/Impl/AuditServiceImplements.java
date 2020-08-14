@@ -34,7 +34,7 @@ public class AuditServiceImplements implements AuditService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public String promoterTask(String promoterUserId,String ruleId,String taskName) throws Exception{
+    public String promoterTask(String promoterUserId,String ruleId,String taskName){
         SqlSession session = sqlSessionFactory.openSession();
         //1、根据ruleId查询任务规则表，拿到任务审批人数组
         AtomicInteger index = new AtomicInteger(1);
@@ -98,7 +98,7 @@ public class AuditServiceImplements implements AuditService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public String auditTask(String currentUserId, String taskId,boolean hasNextAudit) throws Exception {
+    public String auditTask(String currentUserId, String taskId,boolean hasNextAudit) {
         SqlSession session = sqlSessionFactory.openSession();
         //1、更新任务分配表的任务状态为已审批
         TaskAssignDao taskAssignDao = session.getMapper(TaskAssignDao.class);
@@ -151,7 +151,7 @@ public class AuditServiceImplements implements AuditService {
      * @throws Exception
      */
     @Override
-    public List<EcifTask> getPreAuditTasks(String currentUserId) throws Exception {
+    public List<EcifTask> getPreAuditTasks(String currentUserId) {
         SqlSession session = sqlSessionFactory.openSession();
         TaskAssignDao taskAssignDao = session.getMapper(TaskAssignDao.class);
         List<TaskAssign> taskAssignList = taskAssignDao.selectByTaskAssign(currentUserId);
@@ -171,7 +171,7 @@ public class AuditServiceImplements implements AuditService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public String rejectTask(String currentUserId, String taskId) throws Exception {
+    public String rejectTask(String currentUserId, String taskId) {
         SqlSession session = sqlSessionFactory.openSession();
         //1、更新任务分配表的任务状态为已驳回
         TaskAssignDao taskAssignDao = session.getMapper(TaskAssignDao.class);
@@ -220,7 +220,7 @@ public class AuditServiceImplements implements AuditService {
      * @throws Exception
      */
     @Override
-    public List<TaskRec> getTaskLifeCycle(String taskId) throws Exception {
+    public List<TaskRec> getTaskLifeCycle(String taskId) {
         SqlSession session = sqlSessionFactory.openSession();
         TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
         List<TaskRec> taskRecList = taskRecDao.selectByTaskId(taskId);
