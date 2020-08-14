@@ -112,15 +112,6 @@ public class AuditServiceImplements implements AuditService {
         //0、查询任务分配表,是否有下一个审批人
         int auditCount = taskAssignDao.judgeHasNextAudit(taskId);
         boolean hasNextAudit = (auditCount == 1 ? true : false);
-        //1、更新任务分配表的任务状态为已审批
-        TaskAssign taskAssign = new TaskAssign();
-        taskAssign.setTaskAssign(currentUserId);
-        taskAssign.setTaskId(taskId);
-        taskAssign.setTaskStatusCode(AuditStatusEnum.ALREADY_AUDIT.getCode());
-//        taskAssign.setRemark("用户：" + currentUserId + "的任务" + taskId + "已经审批");
-        taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批*************************");
-        taskAssign.setTaskCompleteTime(new Date());
-        taskAssignDao.updateByTaskIdAndAssignId(taskAssign);
         //2、插入任务记录表
         EcifTaskDao ecifTaskDao = session.getMapper(EcifTaskDao.class);
         EcifTask ecifTask_ = ecifTaskDao.selectByPrimaryKey(taskId);
@@ -146,8 +137,15 @@ public class AuditServiceImplements implements AuditService {
                 index = i;
             }
         }
+        //1、更新任务分配表的任务状态为已审批
+        TaskAssign taskAssign = new TaskAssign();
+        taskAssign.setTaskAssign(currentUserId);
+        taskAssign.setTaskId(taskId);
+        taskAssign.setTaskStatusCode(AuditStatusEnum.ALREADY_AUDIT.getCode());
+        taskAssign.setTaskCompleteTime(new Date());
         if ((index + 1) == rulesUserIdList.size()) {
             //已经是最后一个节点
+            taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批，审批结束*********" );
             taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
             taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             taskRec.setTaskStatusChangeTime(new Date());
@@ -162,6 +160,7 @@ public class AuditServiceImplements implements AuditService {
             taskRec.setTaskStatusChangeTime(new Date());
             ecifTask.setTaskStatusCode(AuditStatusEnum.ING_AUDIT.getCode());
             String nextAuditId = rulesUserIdList.get(index + 1);
+            taskAssign.setRemark("任务" + taskId + "已经被用户" + currentUserId + "审批,下一个审批人为:" + nextAuditId + "******");
             //4、更新任务分配表下一审批节点的状态从"未分配"为"待审批"
             TaskAssign taskAssign1 = new TaskAssign();
             taskAssign1.setTaskId(taskId);
@@ -171,6 +170,7 @@ public class AuditServiceImplements implements AuditService {
             //TODO 向下一审批人发送审批消息
 
         }
+
 //        } else {
 //            taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
 //            taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
@@ -180,6 +180,7 @@ public class AuditServiceImplements implements AuditService {
 //            //TODO 向发起人发送消息，任务审批已完成
 //
 //        }
+        taskAssignDao.updateByTaskIdAndAssignId(taskAssign);
         taskRecDao.insertSelective(taskRec);
         ecifTaskDao.updateByPrimaryKeySelective(ecifTask);
         session.commit();
