@@ -73,22 +73,31 @@ public class AuditServiceImplements implements AuditService {
             taskAssign.setTaskStatusCode(AuditStatusEnum.NOT_ASSIGN.getCode());
             taskAssignDao.insert(taskAssign);
         }
-        batchSession.commit();
-        batchSession.clearCache();
         //4、插入任务记录表
         TaskRecDao taskRecDao = batchSession.getMapper(TaskRecDao.class);
-        for (String ruleUserId : rulesUserIdList) {
-            TaskRec taskRec = new TaskRec();
-            taskRec.setTaskId(ecifTaskLatest.getTaskId());
-            taskRec.setTaskName(ecifTaskLatest.getTaskName());
-            taskRec.setPromoterUser(ecifTaskLatest.getPromoterUser());
-            taskRec.setTaskAssign(ruleUserId);
-            taskRec.setCreateTime(ecifTaskLatest.getCreateTime());
-            taskRec.setUntilTime(ecifTaskLatest.getUntilTime());
-            taskRec.setTaskStatusChangeAfter(ecifTaskLatest.getTaskStatusCode());
-            taskRec.setTaskStatusChangeTime(new Date());
-            taskRecDao.insertSelective(taskRec);
-        }
+        TaskRec taskRec = new TaskRec();
+        taskRec.setTaskId(ecifTaskLatest.getTaskId());
+        taskRec.setTaskName(ecifTaskLatest.getTaskName());
+        taskRec.setPromoterUser(ecifTaskLatest.getPromoterUser());
+        taskRec.setTaskAssign(rulesUserIdList.get(0));
+        taskRec.setCreateTime(ecifTaskLatest.getCreateTime());
+        taskRec.setUntilTime(ecifTaskLatest.getUntilTime());
+        taskRec.setTaskStatusChangeAfter(ecifTaskLatest.getTaskStatusCode());
+        taskRec.setTaskStatusChangeTime(new Date());
+        taskRecDao.insertSelective(taskRec);
+        rulesUserIdList.remove(0);
+//        for (String ruleUserId : rulesUserIdList) {
+//            TaskRec taskRec_ = new TaskRec();
+//            taskRec.setTaskId(ecifTaskLatest.getTaskId());
+//            taskRec.setTaskName(ecifTaskLatest.getTaskName());
+//            taskRec.setPromoterUser(ecifTaskLatest.getPromoterUser());
+//            taskRec.setTaskAssign(ruleUserId);
+//            taskRec.setCreateTime(ecifTaskLatest.getCreateTime());
+//            taskRec.setUntilTime(ecifTaskLatest.getUntilTime());
+//            taskRec.setTaskStatusChangeAfter(ecifTaskLatest.getTaskStatusCode());
+//            taskRec.setTaskStatusChangeTime(new Date());
+//            taskRecDao.insertSelective(taskRec);
+//        }
         batchSession.commit();
         batchSession.clearCache();
         return "OK";
