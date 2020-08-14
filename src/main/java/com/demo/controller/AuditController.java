@@ -1,12 +1,15 @@
 package com.demo.controller;
 
 import com.demo.constant.Result;
+import com.demo.generator.EcifTask;
 import com.demo.service.AuditService;
 import com.demo.utils.ResultUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,6 +36,14 @@ public class AuditController {
         boolean flag = (hasNextAudit == 0)? false : true;
         String auditTask = auditService.auditTask(currentUserId, taskId, flag);
         return ResultUtils.success(auditTask);
+    }
+
+    @ApiOperation(value = "获取待办任务列表接口",notes = "用户获取待办任务列表")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping("/preTaskList")
+    public Result getPreAuditTasks(@RequestParam("currentUserId") String currentUserId){
+        List<EcifTask> taskList = auditService.getPreAuditTasks(currentUserId);
+        return ResultUtils.success(taskList);
     }
 
 
