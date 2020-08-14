@@ -2,6 +2,7 @@ package com.demo.controller;
 
 import com.demo.constant.Result;
 import com.demo.generator.EcifTask;
+import com.demo.generator.TaskRec;
 import com.demo.service.AuditService;
 import com.demo.utils.ResultUtils;
 import io.swagger.annotations.ApiOperation;
@@ -46,5 +47,19 @@ public class AuditController {
         return ResultUtils.success(taskList);
     }
 
+    @ApiOperation(value = "驳回任务接口",notes = "用户驳回任务")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping("/rejectTask")
+    public Result rejectTask(@RequestParam("currentUserId") String currentUserId,@RequestParam("taskId") String taskId){
+        String rejectTask = auditService.rejectTask(currentUserId, taskId);
+        return ResultUtils.success(rejectTask);
+    }
 
+    @ApiOperation(value = "获取任务生命周期接口",notes = "用户获取任务生命周期")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping("/taskLifeCycle")
+    public Result getTaskLifeCycle(@RequestParam("taskId") String taskId){
+        List<TaskRec> taskRecList = auditService.getTaskLifeCycle(taskId);
+        return ResultUtils.success(taskRecList);
+    }
 }
