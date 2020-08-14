@@ -41,4 +41,6 @@ public interface TaskAssignDao {
                                            );
 
     int updateByPrimaryKey(TaskAssign record);
+
+    int judgeHasNextAudit(@Param("taskId") String taskId);
 }

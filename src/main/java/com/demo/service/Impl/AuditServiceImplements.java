@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("auditService")
 public class AuditServiceImplements implements AuditService {
 
     @Autowired
@@ -26,15 +26,16 @@ public class AuditServiceImplements implements AuditService {
 
     /**
      * 发起审批任务
+     *
      * @param promoterUserId 发起人
-     * @param ruleId 审批规则
-     * @param taskName 任务名称
+     * @param ruleId         审批规则
+     * @param taskName       任务名称
      * @return
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public String promoterTask(String promoterUserId,String ruleId,String taskName){
+    public String promoterTask(String promoterUserId, String ruleId, String taskName) {
         SqlSession session = sqlSessionFactory.openSession();
         //1、根据ruleId查询任务规则表，拿到任务审批人数组
         AtomicInteger index = new AtomicInteger(1);
@@ -42,7 +43,7 @@ public class AuditServiceImplements implements AuditService {
         TaskRules taskRules = taskRulesDao.selectByPrimaryKey(ruleId);
         List<String> rulesUserIdList = ObjUtils.ConvertObjToList(taskRules);
         rulesUserIdList.remove(0);
-        rulesUserIdList.stream().forEach(x -> log.info("第"+ (index.getAndIncrement()) + "审批人为：" + x));
+        rulesUserIdList.stream().forEach(x -> log.info("第" + (index.getAndIncrement()) + "审批人为：" + x));
         //2、插入任务表，更新任务状态为待审批
         EcifTask ecifTask = new EcifTask();
         ecifTask.setTaskName(taskName);
@@ -51,16 +52,16 @@ public class AuditServiceImplements implements AuditService {
         ecifTask.setCreateTime(new Date());
         ecifTask.setPromoterUser(promoterUserId);
         ecifTask.setTaskRulesId(ruleId);
-        ecifTask.setUntilTime(new Date(2020,12,2,14,0,0));
+        ecifTask.setUntilTime(new Date(2020, 12, 2, 14, 0, 0));
         EcifTaskDao ecifTaskDao = session.getMapper(EcifTaskDao.class);
         ecifTaskDao.insertSelective(ecifTask);
         session.commit();
         session.clearCache();
         //3、插入任务分配表
         EcifTask ecifTaskLatest = ecifTaskDao.selectLatest();
-        SqlSession batchSession = sqlSessionFactory.openSession(ExecutorType.BATCH,false);
+        SqlSession batchSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
         TaskAssignDao taskAssignDao = batchSession.getMapper(TaskAssignDao.class);
-        for (String ruleUserId : rulesUserIdList){
+        for (String ruleUserId : rulesUserIdList) {
             TaskAssign taskAssign = new TaskAssign();
             taskAssign.setTaskId(ecifTaskLatest.getTaskId());
             taskAssign.setTaskAssign(ruleUserId);
@@ -71,7 +72,7 @@ public class AuditServiceImplements implements AuditService {
         batchSession.clearCache();
         //4、插入任务记录表
         TaskRecDao taskRecDao = batchSession.getMapper(TaskRecDao.class);
-        for (String ruleUserId : rulesUserIdList){
+        for (String ruleUserId : rulesUserIdList) {
             TaskRec taskRec = new TaskRec();
             taskRec.setTaskId(ecifTaskLatest.getTaskId());
             taskRec.setTaskName(ecifTaskLatest.getTaskName());
@@ -90,18 +91,21 @@ public class AuditServiceImplements implements AuditService {
 
     /**
      * 审批任务
+     *
      * @param currentUserId 审批人(当前用户)
-     * @param taskId 任务id
-     * @param hasNextAudit 是否有下个审批人
+     * @param taskId        任务id
      * @return
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public String auditTask(String currentUserId, String taskId,boolean hasNextAudit) {
+    public String auditTask(String currentUserId, String taskId) {
         SqlSession session = sqlSessionFactory.openSession();
-        //1、更新任务分配表的任务状态为已审批
         TaskAssignDao taskAssignDao = session.getMapper(TaskAssignDao.class);
+        //0、查询任务分配表,是否有下一个审批人
+        int auditCount = taskAssignDao.judgeHasNextAudit(taskId);
+        boolean hasNextAudit = (auditCount == 1 ? true : false);
+        //1、更新任务分配表的任务状态为已审批
         TaskAssign taskAssign = new TaskAssign();
         taskAssign.setTaskAssign(currentUserId);
         taskAssign.setTaskId(taskId);
@@ -123,7 +127,7 @@ public class AuditServiceImplements implements AuditService {
         EcifTask ecifTask = new EcifTask();
         ecifTask.setTaskId(taskId);
         ecifTask.setUpdateTime(new Date());
-        if (hasNextAudit){
+        if (hasNextAudit) {
             taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
             taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ING_AUDIT.getCode());
             taskRec.setTaskStatusChangeTime(new Date());
@@ -131,7 +135,7 @@ public class AuditServiceImplements implements AuditService {
             ecifTask.setTaskStatusCode(AuditStatusEnum.ING_AUDIT.getCode());
             //TODO 向下一审批人发送审批消息
 
-        }else {
+        } else {
             taskRec.setTaskStatusChangeBefore(AuditStatusEnum.PRE_AUDIT.getCode());
             taskRec.setTaskStatusChangeAfter(AuditStatusEnum.ALREADY_COMPLETE.getCode());
             taskRec.setTaskStatusChangeTime(new Date());
@@ -149,6 +153,7 @@ public class AuditServiceImplements implements AuditService {
 
     /**
      * 用户获取当前待办审批任务列表
+     *
      * @param currentUserId 当前用户
      * @return
      * @throws Exception
@@ -167,8 +172,9 @@ public class AuditServiceImplements implements AuditService {
 
     /**
      * 用户驳回任务
-     * @param currentUserId
-     * @param taskId
+     *
+     * @param currentUserId 当前用户
+     * @param taskId        任务id
      * @return
      * @throws Exception
      */
@@ -218,7 +224,8 @@ public class AuditServiceImplements implements AuditService {
 
     /**
      * 任务生命周期展示
-     * @param taskId
+     *
+     * @param taskId 任务id
      * @return
      * @throws Exception
      */
@@ -228,5 +235,19 @@ public class AuditServiceImplements implements AuditService {
         TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
         List<TaskRec> taskRecList = taskRecDao.selectByTaskId(taskId);
         return taskRecList;
+    }
+
+    /**
+     * 获取任务规则
+     *
+     * @param taskRulesId 任务规则表id
+     * @return
+     */
+    @Override
+    public TaskRules getTaskRule(String taskRulesId) {
+        SqlSession session = sqlSessionFactory.openSession();
+        TaskRulesDao taskRulesDao = session.getMapper(TaskRulesDao.class);
+        TaskRules taskRules = taskRulesDao.selectByPrimaryKey(taskRulesId);
+        return taskRules;
     }
 }

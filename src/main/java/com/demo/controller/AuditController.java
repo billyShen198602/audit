@@ -45,10 +45,8 @@ public class AuditController {
     })
     @CrossOrigin(origins = "*", maxAge = 3600)
     @PostMapping("/audit")
-    public Result auditTask(@RequestParam("currentUserId") String currentUserId,@RequestParam("taskId") String taskId,
-                            @RequestParam("hasNextAudit") int hasNextAudit){
-        boolean flag = (hasNextAudit == 0)? false : true;
-        String auditTask = auditService.auditTask(currentUserId, taskId, flag);
+    public Result auditTask(@RequestParam("currentUserId") String currentUserId,@RequestParam("taskId") String taskId){
+        String auditTask = auditService.auditTask(currentUserId, taskId);
         return ResultUtils.success(auditTask);
     }
 

@@ -297,4 +297,11 @@
       REMARK = #{remark,jdbcType=VARCHAR}
     where TASK_ASSIGN_ID = #{taskAssignId,jdbcType=VARCHAR}
   </update>
+  <select id="judgeHasNextAudit" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+    count(1)
+    from TASK_ASSIGN
+    where TASK_ID = #{taskId,jdbcType=VARCHAR}
+    and TASK_STATUS_CODE = 1
+  </select>
 </mapper>
