@@ -19,4 +19,8 @@ public interface AuditService {
     List<TaskRec> getTaskLifeCycle(String taskId);
 
     TaskRules getTaskRule(String taskId);
+
+    List<TaskRec> getTaskLifeCycleGroupBy();
+
+    List<TaskRules> getTaskRules(String currentUserId);
 }

@@ -96,18 +96,6 @@ public class AuditServiceImplements implements AuditService {
         taskRec.setTaskStatusChangeTime(new Date());
         taskRecDao.insertSelective(taskRec);
         rulesUserIdList.remove(0);
-//        for (String ruleUserId : rulesUserIdList) {
-//            TaskRec taskRec_ = new TaskRec();
-//            taskRec.setTaskId(ecifTaskLatest.getTaskId());
-//            taskRec.setTaskName(ecifTaskLatest.getTaskName());
-//            taskRec.setPromoterUser(ecifTaskLatest.getPromoterUser());
-//            taskRec.setTaskAssign(ruleUserId);
-//            taskRec.setCreateTime(ecifTaskLatest.getCreateTime());
-//            taskRec.setUntilTime(ecifTaskLatest.getUntilTime());
-//            taskRec.setTaskStatusChangeAfter(ecifTaskLatest.getTaskStatusCode());
-//            taskRec.setTaskStatusChangeTime(new Date());
-//            taskRecDao.insertSelective(taskRec);
-//        }
         batchSession.commit();
         batchSession.clearCache();
         //放入内存，防止重复插入
@@ -290,7 +278,8 @@ public class AuditServiceImplements implements AuditService {
         SqlSession session = sqlSessionFactory.openSession();
         TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
         List<TaskRec> taskRecList = taskRecDao.selectByTaskId(taskId);
-        return taskRecList;
+        List<TaskRec> taskRecGroupByList = taskRecDao.selectAllGroupBy();
+        return taskRecGroupByList;
     }
 
     /**
@@ -305,5 +294,36 @@ public class AuditServiceImplements implements AuditService {
         TaskRulesDao taskRulesDao = session.getMapper(TaskRulesDao.class);
         TaskRules taskRules = taskRulesDao.selectByPrimaryKey(taskRulesId);
         return taskRules;
+    }
+
+    /**
+     * 查询全部任务
+     * @return
+     */
+    @Override
+    public List<TaskRec> getTaskLifeCycleGroupBy() {
+        SqlSession session = sqlSessionFactory.openSession();
+        TaskRecDao taskRecDao = session.getMapper(TaskRecDao.class);
+        List<TaskRec> taskRecList = taskRecDao.selectAllGroupBy();
+        return taskRecList;
+    }
+
+    /**
+     * 当前用户查看所有待办任务的审批规则
+     * @param currentUserId 当前用户
+     * @return
+     */
+    @Override
+    public List<TaskRules> getTaskRules(String currentUserId) {
+        SqlSession session = sqlSessionFactory.openSession();
+        EcifTaskDao ecifTaskDao = session.getMapper(EcifTaskDao.class);
+        TaskRulesDao taskRulesDao = session.getMapper(TaskRulesDao.class);
+        List<EcifTask> ecifTaskList = getPreAuditTasks(currentUserId);
+        List<String> taskRulesIdList = ecifTaskList.stream().map(ecifTask -> ecifTaskDao.selectByPrimaryKey(ecifTask.getTaskId()))
+                .map(EcifTask::getTaskRulesId)
+                .collect(Collectors.toList());
+        List<TaskRules> taskRulesList = taskRulesIdList.stream().map(taskRuleId -> taskRulesDao.selectByPrimaryKey(taskRuleId))
+                .collect(Collectors.toList());
+        return taskRulesList;
     }
 }

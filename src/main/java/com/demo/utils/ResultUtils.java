@@ -11,6 +11,13 @@ public class ResultUtils {
         return result;
     }
 
+    public static Result success(String code,String msg){
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        return result;
+    }
+
     public static Result success(Object obj) {
         Result result = new Result();
         result.setCode("200");

@@ -1,8 +1,10 @@
 package com.demo.controller;
 
 import com.demo.constant.Result;
+import com.demo.constant.ResultEnum;
 import com.demo.generator.EcifTask;
 import com.demo.generator.TaskRec;
+import com.demo.generator.TaskRules;
 import com.demo.service.AuditService;
 import com.demo.utils.ResultUtils;
 import io.swagger.annotations.ApiImplicitParam;
@@ -10,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -83,5 +86,26 @@ public class AuditController {
         return ResultUtils.success(taskRecList);
     }
 
-    //TODO 当前用户查看待审批任务的审批规则
+    @ApiOperation(value = "分组获取所有任务生命周期接口",notes = "用户获取所有任务生命周期")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @GetMapping("/taskLifeCycleGroupBy")
+    public Result getTaskLifeCycleGroupBy(){
+        List<TaskRec> taskRecList = auditService.getTaskLifeCycleGroupBy();
+        return ResultUtils.success(taskRecList);
+    }
+
+    @ApiOperation(value = "用户查看待审批任务的审批规则接口",notes = "当前用户查看待审批任务的审批规则")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "currentUserId",dataType = "String",required = true,value = "当前用户id")
+    })
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping("/getPreTaskRules")
+    public Result getTaskRules(String currentUserId){
+        List<TaskRules> taskRulesList = auditService.getTaskRules(currentUserId);
+        if (CollectionUtils.isEmpty(taskRulesList)){
+            return ResultUtils.success(ResultEnum.TASK_RULES_ISEMPTY.getCode()
+            ,ResultEnum.TASK_RULES_ISEMPTY.getDesc());
+        }
+        return ResultUtils.success(taskRulesList);
+    }
 }

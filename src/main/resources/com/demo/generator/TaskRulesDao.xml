@@ -259,4 +259,5 @@
       SEVENTH_USER_ID = #{seventhUserId,jdbcType=VARCHAR}
     where TASK_RULES_ID = #{taskRulesId,jdbcType=VARCHAR}
   </update>
+
 </mapper>

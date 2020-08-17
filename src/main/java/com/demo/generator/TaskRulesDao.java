@@ -26,4 +26,5 @@ public interface TaskRulesDao {
     int updateByPrimaryKeySelective(TaskRules record);
 
     int updateByPrimaryKey(TaskRules record);
+
 }

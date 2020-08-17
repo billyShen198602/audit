@@ -21,4 +21,6 @@ public interface TaskRecDao {
     int updateByExampleSelective(@Param("record") TaskRec record, @Param("example") TaskRecExample example);
 
     int updateByExample(@Param("record") TaskRec record, @Param("example") TaskRecExample example);
+
+    List<TaskRec> selectAllGroupBy();
 }

@@ -96,6 +96,14 @@
     where task_id = #{taskId,jdbcType=VARCHAR}
     order by task_rec_id desc
   </select>
+  <select id="selectAllGroupBy" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from TASK_REC
+    group by
+    <include refid="Base_Column_List"/>
+    order by task_id,task_rec_id asc
+  </select>
 
   <delete id="deleteByExample" parameterType="com.demo.generator.TaskRecExample">
     delete from AUDIT.TASK_REC
