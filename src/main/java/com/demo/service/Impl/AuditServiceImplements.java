@@ -43,6 +43,8 @@ public class AuditServiceImplements implements AuditService {
         TaskRules taskRules = taskRulesDao.selectByPrimaryKey(ruleId);
         List<String> rulesUserIdList = ObjUtils.ConvertObjToList(taskRules);
         rulesUserIdList.remove(0);
+        rulesUserIdList = rulesUserIdList.stream().filter(ruleUserId -> !promoterUserId.equals(ruleUserId))
+                .collect(Collectors.toList());
         rulesUserIdList.stream().forEach(x -> log.info("第" + (index.getAndIncrement()) + "审批人为：" + x));
         //2、插入任务表，更新任务状态为待审批
         EcifTask ecifTask = new EcifTask();
