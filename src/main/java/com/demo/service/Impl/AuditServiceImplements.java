@@ -82,6 +82,7 @@ public class AuditServiceImplements implements AuditService {
         taskRec.setTaskAssign(rulesUserIdList.get(0));
         taskRec.setCreateTime(ecifTaskLatest.getCreateTime());
         taskRec.setUntilTime(ecifTaskLatest.getUntilTime());
+        taskRec.setTaskStatusChangeBefore(AuditStatusEnum.NOT_ASSIGN.getCode());
         taskRec.setTaskStatusChangeAfter(ecifTaskLatest.getTaskStatusCode());
         taskRec.setTaskStatusChangeTime(new Date());
         taskRecDao.insertSelective(taskRec);
