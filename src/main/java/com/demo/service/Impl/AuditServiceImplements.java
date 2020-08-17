@@ -1,6 +1,9 @@
 package com.demo.service.Impl;
 
 import com.demo.constant.AuditStatusEnum;
+import com.demo.constant.ResultEnum;
+import com.demo.constant.TaskMap;
+import com.demo.exception.MyException;
 import com.demo.generator.*;
 import com.demo.service.AuditService;
 import com.demo.utils.ObjUtils;
@@ -36,6 +39,10 @@ public class AuditServiceImplements implements AuditService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String promoterTask(String promoterUserId, String ruleId, String taskName) {
+        if (TaskMap.taskIdList.contains(taskName)){
+            throw new MyException(ResultEnum.TASK_ALREADY_EXISTS_ERROR.getCode(),
+                    ResultEnum.TASK_ALREADY_EXISTS_ERROR.getDesc());
+        }
         SqlSession session = sqlSessionFactory.openSession();
         //1、根据ruleId查询任务规则表，拿到任务审批人数组
         AtomicInteger index = new AtomicInteger(1);
@@ -103,6 +110,8 @@ public class AuditServiceImplements implements AuditService {
 //        }
         batchSession.commit();
         batchSession.clearCache();
+        //放入内存，防止重复插入
+        TaskMap.taskIdList.add(taskName);
         return "OK";
     }
 
