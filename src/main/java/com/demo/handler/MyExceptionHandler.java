@@ -2,15 +2,15 @@ package com.demo.handler;
 
 import com.demo.constant.Result;
 import com.demo.constant.ResultEnum;
-import com.demo.utils.ResultUtils;
 import com.demo.exception.MyException;
+import com.demo.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class MyExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
