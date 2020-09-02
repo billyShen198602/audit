@@ -1,5 +1,9 @@
 package com.demo.utils;
 
+import ch.ethz.ssh2.SFTPv3Client;
+import ch.ethz.ssh2.SFTPv3DirectoryEntry;
+import ch.ethz.ssh2.Session;
+import ch.ethz.ssh2.StreamGobbler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -7,9 +11,70 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
 @Slf4j
 public class ReadConfigureFile3 {
+
+    public void readFile() {
+        //创建远程连接，默认连接端口为22，如果不使用默认，可以使用方法
+        //new Connection(ip, port)创建对象
+        String ip = "47.93.199.61";
+        String usr = "root";
+        String pwd = "1984SSxx..";
+        //int     port=22;
+        ch.ethz.ssh2.Connection conn = null;
+        String date = "";
+        String path="";
+        try {
+            //连接远程服务器
+            // 连接部署服务器
+            conn = new ch.ethz.ssh2.Connection(ip);
+            conn.connect();
+            //使用用户名和密码登录
+            boolean b = conn.authenticateWithPassword(usr, pwd);
+            if (!b) {
+                throw new IOException("Authentication failed.");
+            } else {
+                SFTPv3Client sft = new SFTPv3Client(conn);
+                Vector<?> v = sft.ls("path");
+                for (int i = 0; i < v.size(); i++) {
+                    SFTPv3DirectoryEntry s = new SFTPv3DirectoryEntry();
+                    s = (SFTPv3DirectoryEntry) v.get(i);
+                    //文件名
+                    String filename = s.filename;
+                    if (filename.length() > 17) {
+                        String substring = filename.substring(7, 17);
+                        if (substring.equals(date)) {
+                            System.out.println(filename);
+
+                            Session ss=null;
+                            ss=conn.openSession();
+                            ss.execCommand("cat ".concat("path"+filename));
+                            InputStream    is = new StreamGobbler(ss.getStdout());
+                            BufferedReader bs = new BufferedReader(new InputStreamReader(is));
+                            while(true){
+                                String line = bs.readLine();
+                                if(line==null){
+                                    break;
+                                }else{
+                                    System.out.println("abc........................"+line);
+                                }
+                            }
+                            bs.close();
+                            ss.close();
+                            conn.close();
+                        }
+                    }
+                }
+
+            }
+        } catch (IOException e) {
+            System.err.printf("用户%s密码%s登录服务器%s失败！", usr, pwd, ip);
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * @param args
@@ -43,8 +108,8 @@ public class ReadConfigureFile3 {
 
         for (int i = 0; i < files.length; i++) {//遍历文件夹下所有文件
             String fileName = files[i].substring(0, files[i].lastIndexOf("."));//取得所选文件名
-            String province = fileName.substring(0, fileName.length() - 2);
-            String cardType = fileName.substring(fileName.length() - 2);
+//            String province = fileName.substring(0, fileName.length() - 2);
+//            String cardType = fileName.substring(fileName.length() - 2);
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(path + "\\" + files[i]);
@@ -95,5 +160,9 @@ public class ReadConfigureFile3 {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void importODS(String fileName){
+
     }
 }
