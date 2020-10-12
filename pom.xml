@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>come.demo.SpringBootMyBatis</groupId>
-	<artifactId>SpringBootMyBatis</artifactId>
+	<groupId>come.demo.audit</groupId>
+	<artifactId>audit</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>SpringBootMyBatis</name>
-	<description>SpringBootMyBatis</description>
+	<name>audit</name>
+	<description>audit</description>
 
 	<!-- lookup parent from repository -->
 	<parent>

@@ -75,7 +75,8 @@ public class ReadConfigureFile2 {
                             log.info(info[1]);
                             log.info("Info[0]((((((((((((((((((((((((" + String.valueOf(info[0].length()) + "))))))))))))))))))))))))");
                             log.info("Info[1]((((((((((((((((((((((((" + String.valueOf(info[1].length()) + "))))))))))))))))))))))))");
-                            sql = sql = "insert into task_status(task_status_code,task_status_name)values('" + info[0] + "','" + info[1] + "')";
+                            sql = sql = "insert into task_status(" +
+                                    "task_status_code,task_status_name)values('" + info[0] + "','" + info[1] + "')";
                             stmt.addBatch(sql);
                         }
                     }
